@@ -22,9 +22,15 @@ class DiskAgent(Agent):
         findings: List[Finding] = []
         notes: List[str] = []
 
-        # --- boot volume capacity via df -------------------------------------
+        # --- capacity via df -------------------------------------------------
+        # On modern macOS `/` is the sealed read-only System volume (~tiny);
+        # the user's data lives on the Data volume. Measure that so the numbers
+        # reflect real storage, falling back to `/` on older layouts.
         used = avail = size = 0
-        rc, out, _ = ctx.run(["df", "-k", "/"], timeout=15)
+        target = "/System/Volumes/Data"
+        if not os.path.isdir(target):
+            target = "/"
+        rc, out, _ = ctx.run(["df", "-k", target], timeout=15)
         if rc == 0:
             lines = out.strip().splitlines()
             if len(lines) >= 2:
