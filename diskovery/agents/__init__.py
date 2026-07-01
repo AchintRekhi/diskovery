@@ -10,6 +10,9 @@ from .homebrew import HomebrewAgent
 from .python_env import PythonAgent
 from .node import NodeAgent
 from .containers import ContainerAgent
+from .caches import CacheLogAgent
+from .creative_cache import CreativeCacheAgent
+from .orphaned_app_data import OrphanedAppDataAgent
 
 
 def all_agents() -> list[Agent]:
@@ -19,6 +22,9 @@ def all_agents() -> list[Agent]:
         PythonAgent(),
         NodeAgent(),
         ContainerAgent(),
+        CacheLogAgent(),
+        CreativeCacheAgent(),
+        OrphanedAppDataAgent(),
     ]
 
 
