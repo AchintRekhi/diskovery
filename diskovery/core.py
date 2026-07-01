@@ -221,10 +221,11 @@ class Agent:
 # Formatting helpers (used by agents and the renderer)
 # --------------------------------------------------------------------------- #
 def human_size(num: int) -> str:
-    """Human-friendly base-1024 size, e.g. 1536 -> '1.5 KB'."""
+    """Human-friendly size in base-1000 units, matching how macOS (Finder /
+    About This Mac → Storage) reports disk space, e.g. 1500 -> '1.5 KB'."""
     if num is None:
         return "0 B"
-    step = 1024.0
+    step = 1000.0
     units = ["B", "KB", "MB", "GB", "TB", "PB"]
     val = float(num)
     for unit in units:

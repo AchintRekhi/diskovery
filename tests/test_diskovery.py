@@ -16,11 +16,13 @@ from diskovery.agents.python_env import PythonAgent
 
 class TestFormatting(unittest.TestCase):
     def test_human_size(self):
+        # base-1000 to match macOS storage reporting
         self.assertEqual(human_size(0), "0 B")
         self.assertEqual(human_size(512), "512 B")
-        self.assertEqual(human_size(1024), "1.0 KB")
-        self.assertEqual(human_size(1536), "1.5 KB")
-        self.assertEqual(human_size(1024 ** 3), "1.0 GB")
+        self.assertEqual(human_size(1000), "1.0 KB")
+        self.assertEqual(human_size(1500), "1.5 KB")
+        self.assertEqual(human_size(1_000_000_000), "1.0 GB")
+        self.assertEqual(human_size(45_470_000_000), "45.5 GB")
 
     def test_human_age(self):
         self.assertEqual(human_age(3600), "today")
