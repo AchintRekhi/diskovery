@@ -1,0 +1,16 @@
+# Diskovery writes real scan output here — it contains personal file paths,
+# so it must never be committed.
+reports/
+report.html
+report.json
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.mypy_cache/
+.pytest_cache/
+
+# macOS
+.DS_Store
