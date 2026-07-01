@@ -13,6 +13,8 @@ from .containers import ContainerAgent
 from .caches import CacheLogAgent
 from .creative_cache import CreativeCacheAgent
 from .orphaned_app_data import OrphanedAppDataAgent
+from .large_old_files import LargeOldFilesAgent
+from .duplicates import DuplicateFilesAgent
 
 
 def all_agents() -> list[Agent]:
@@ -25,6 +27,8 @@ def all_agents() -> list[Agent]:
         CacheLogAgent(),
         CreativeCacheAgent(),
         OrphanedAppDataAgent(),
+        LargeOldFilesAgent(),
+        DuplicateFilesAgent(),
     ]
 
 
