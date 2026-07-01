@@ -18,9 +18,38 @@ _SAFE_COLORS = {"safe": "#3fb950", "review": "#d29922", "keep": "#8b949e"}
 _SAFE_LABEL = {"safe": "Safe to reclaim", "review": "Review first", "keep": "Keep"}
 
 
+def compute_totals(results: List[AgentResult]) -> tuple:
+    """Global safe/review totals, de-duplicated by path.
+
+    Some paths are legitimately reported by two agents (e.g. the pip cache by
+    both PythonAgent and CacheLogAgent). Counting them once keeps the headline
+    honest. Path-less aggregate rows (e.g. "… 21 more node_modules") are always
+    counted since they represent distinct extra space.
+    """
+    safe = review = 0
+    seen_safe: set = set()
+    seen_review: set = set()
+    for a in results:
+        for f in a.findings:
+            if f.size_bytes <= 0:
+                continue
+            if f.safety is Safety.SAFE:
+                if f.path:
+                    if f.path in seen_safe:
+                        continue
+                    seen_safe.add(f.path)
+                safe += f.size_bytes
+            elif f.safety is Safety.REVIEW:
+                if f.path:
+                    if f.path in seen_review:
+                        continue
+                    seen_review.add(f.path)
+                review += f.size_bytes
+    return safe, review
+
+
 def build_json(results: List[AgentResult], meta: dict) -> dict:
-    safe = sum(a.reclaimable_bytes for a in results)
-    review = sum(a.review_bytes for a in results)
+    safe, review = compute_totals(results)
     return {
         "diskovery_version": meta.get("version"),
         "generated_at": meta.get("generated_at"),
@@ -38,8 +67,7 @@ def build_json(results: List[AgentResult], meta: dict) -> dict:
 
 
 def build_html(results: List[AgentResult], meta: dict) -> str:
-    safe = sum(a.reclaimable_bytes for a in results)
-    review = sum(a.review_bytes for a in results)
+    safe, review = compute_totals(results)
     machine = meta.get("machine", {})
 
     # Biggest opportunities across all agents (safe or review, real size).

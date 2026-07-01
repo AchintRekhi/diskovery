@@ -23,8 +23,12 @@ from .render import build_html, build_json
 
 
 def _disk_info() -> dict:
+    # Measure the Data volume (real user storage), not the sealed System volume.
+    target = "/System/Volumes/Data"
+    if not os.path.isdir(target):
+        target = "/"
     try:
-        out = subprocess.run(["df", "-k", "/"], capture_output=True, text=True,
+        out = subprocess.run(["df", "-k", target], capture_output=True, text=True,
                              timeout=15).stdout
         parts = out.strip().splitlines()[1].split()
         return {
@@ -104,8 +108,8 @@ def main(argv=None) -> int:
         import json
         json.dump(build_json(results, meta), fh, indent=2)
 
-    safe = sum(a.reclaimable_bytes for a in results)
-    review = sum(a.review_bytes for a in results)
+    from .render import compute_totals
+    safe, review = compute_totals(results)
     print(f"\n  ✓ Done in {duration:.1f}s — "
           f"{human_size(safe)} safe to reclaim, {human_size(review)} after review.")
     print(f"  → {html_path}\n")
