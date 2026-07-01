@@ -8,6 +8,8 @@ from ..core import Agent
 from .disk import DiskAgent
 from .homebrew import HomebrewAgent
 from .python_env import PythonAgent
+from .node import NodeAgent
+from .containers import ContainerAgent
 
 
 def all_agents() -> list[Agent]:
@@ -15,6 +17,8 @@ def all_agents() -> list[Agent]:
         DiskAgent(),
         HomebrewAgent(),
         PythonAgent(),
+        NodeAgent(),
+        ContainerAgent(),
     ]
 
 
