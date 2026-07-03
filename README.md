@@ -23,6 +23,26 @@ One agent hanging or crashing can never sink the report — each runs isolated
 with an overall time budget. Results are aggregated into `report.html` (with a
 machine-readable `report.json` alongside).
 
+## The report
+
+A single HTML file with zero external assets — it opens offline, prints
+cleanly, and works without JavaScript (JS just adds sorting, filtering and
+copy buttons). It's styled like a printed technical audit: warm paper
+background, ledger rules, serif display type and monospaced figures, with
+exactly two data colors — green for *safe*, amber for *review*. It gives you,
+top to bottom:
+
+- **Headline** — how much you can free right now, and how much more after review
+- **Your disk at a glance** — one bar mapping the whole disk: in use / safe to
+  reclaim / needs review / free
+- **Reclaimable space & where it's hiding** — a donut of safe vs. review, and
+  a per-agent breakdown
+- **Biggest wins first** — the largest findings across all agents, ranked
+- **Per-agent detail** — sortable tables with paths, explanations, safety tags
+  and one-click-copy cleanup commands
+- **Toolbar** — filter by safety, live-search across findings/paths/commands,
+  expand/collapse everything
+
 Every finding carries a **safety tag** so you can tell junk from treasure at a
 glance:
 

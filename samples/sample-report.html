@@ -1,466 +1,705 @@
 <!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Diskovery report — sample-mac</title>
+<title>Diskovery — sample-mac</title>
 <style>
 :root {
-  --bg:#0d1117; --panel:#161b22; --panel2:#1c2230; --border:#30363d;
-  --text:#e6edf3; --muted:#8b949e; --accent:#58a6ff;
-  --safe:#3fb950; --review:#d29922; --keep:#8b949e;
+  --paper:#f5f1e8; --panel:#eee8da; --track:#e4ddcb;
+  --ink:#211d15; --muted:#6e675a; --faint:#98917f;
+  --hair:rgba(33,29,21,.16); --rule:#211d15;
+  --safe:#1e7a46; --review:#a3610c; --keep:#8a8375; --danger:#b3362b;
+  --safe-soft:rgba(30,122,70,.1); --review-soft:rgba(163,97,12,.1);
+  --serif:"New York","Iowan Old Style",Charter,Georgia,serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;
 }
 * { box-sizing:border-box; }
-body { margin:0; background:var(--bg); color:var(--text);
-  font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; }
-a { color:var(--accent); }
-.wrap { max-width:1080px; margin:0 auto; padding:28px 20px 80px; }
-.hero { display:flex; flex-wrap:wrap; gap:20px; align-items:flex-end;
-  justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:20px; }
-.hero h1 { margin:0; font-size:26px; letter-spacing:-.5px; }
-.hero .logo { color:var(--accent); }
-.hero .sub { color:var(--muted); font-size:13px; margin-top:4px; }
-.headline { text-align:right; }
-.headline .big { font-size:34px; font-weight:700; color:var(--safe); }
-.headline .big.rev { color:var(--review); font-size:20px; font-weight:600; }
-.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
-  gap:14px; margin:22px 0; }
-.card { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:16px; }
-.card h3 { margin:0 0 10px; font-size:12px; text-transform:uppercase; letter-spacing:.6px;
-  color:var(--muted); font-weight:600; }
-.chart-row { display:flex; gap:18px; align-items:center; }
-.donut { flex:0 0 auto; }
+body { margin:0; background:var(--paper); color:var(--ink);
+  font:14px/1.55 var(--sans); -webkit-font-smoothing:antialiased; }
+a { color:var(--ink); }
+code { font-family:var(--mono); }
+.wrap { max-width:1000px; margin:0 auto; padding:44px 26px 90px; }
+button, summary, th[data-sort] { cursor:pointer; }
+:focus-visible { outline:2px solid var(--ink); outline-offset:2px; }
+.k { font-family:var(--mono); font-size:10.5px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--muted); }
+.num { font-family:var(--mono); font-variant-numeric:tabular-nums; }
+
+/* ---- masthead ---- */
+.masthead { border-bottom:2px solid var(--rule); padding-bottom:14px; }
+.masthead .row1 { display:flex; align-items:baseline; justify-content:space-between;
+  flex-wrap:wrap; gap:8px; }
+.wordmark { font-family:var(--mono); font-weight:700; font-size:15px;
+  letter-spacing:.34em; text-transform:uppercase; }
+.wordmark .dot { color:var(--safe); }
+.masthead .doc { font-family:var(--mono); font-size:10.5px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--muted); }
+.dateline { display:flex; flex-wrap:wrap; gap:6px 22px; margin-top:12px;
+  font-family:var(--mono); font-size:11px; color:var(--muted);
+  letter-spacing:.02em; }
+.dateline b { color:var(--ink); font-weight:600; }
+
+/* ---- headline ---- */
+.headline { display:flex; flex-wrap:wrap; align-items:flex-end; gap:18px 56px;
+  padding:34px 0 30px; border-bottom:1px solid var(--hair); }
+.headline .big { font-family:var(--serif); font-weight:700; font-size:76px;
+  line-height:.95; letter-spacing:-.02em; color:var(--safe);
+  font-variant-numeric:lining-nums; }
+.headline .big small { font-size:40px; letter-spacing:0; }
+.headline .caption { max-width:340px; font-size:14.5px; color:var(--ink);
+  font-family:var(--serif); line-height:1.5; }
+.headline .caption .and { color:var(--muted); }
+.headline .caption b.rev { color:var(--review); font-weight:700; }
+
+/* ---- disk map ---- */
+.diskmap { padding:26px 0 24px; border-bottom:1px solid var(--hair); }
+.rulehead { display:flex; align-items:baseline; justify-content:space-between;
+  gap:14px; margin-bottom:14px; }
+.rulehead h2, .rulehead h3 { margin:0; font-family:var(--mono); font-size:10.5px;
+  font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink); }
+.rulehead .aside { font-family:var(--mono); font-size:10.5px;
+  letter-spacing:.08em; color:var(--muted); }
+.diskbar { display:flex; height:26px; border:1px solid var(--ink); }
+.diskbar .seg { height:100%; min-width:2px; border-right:1px solid var(--paper); }
+.diskbar .seg:last-child { border-right:0; }
+.dlegend { display:flex; flex-wrap:wrap; gap:8px 24px; margin-top:10px;
+  font-family:var(--mono); font-size:11px; color:var(--muted); }
+.dlegend b { color:var(--ink); font-weight:600; }
+.swatch { display:inline-block; width:10px; height:10px; margin-right:7px;
+  vertical-align:-1px; border:1px solid var(--hair); }
+
+/* ---- overview grid ---- */
+.cards { display:grid; grid-template-columns:5fr 7fr; gap:0;
+  border-bottom:1px solid var(--hair); }
+.card { padding:26px 0 24px; min-width:0; }
+.card + .card { border-left:1px solid var(--hair); padding-left:32px; }
+.chart-row { display:flex; gap:24px; align-items:center; }
 .legend { font-size:13px; }
-.legend div { margin:3px 0; }
-.legend .dot { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:7px; }
-.agentbars .row { display:grid; grid-template-columns:150px 1fr 92px; gap:10px;
-  align-items:center; margin:7px 0; font-size:13px; }
-.agentbars .name { color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.agentbars .val { text-align:right; font-variant-numeric:tabular-nums; }
-.bar { background:#0b0f16; border-radius:6px; height:12px; overflow:hidden; }
-.bar-fill { height:100%; border-radius:6px; }
-.section { margin:26px 0; }
-.section h2 { font-size:16px; border-bottom:1px solid var(--border); padding-bottom:8px; }
-details.agent { background:var(--panel); border:1px solid var(--border);
-  border-radius:12px; margin:12px 0; overflow:hidden; }
-details.agent > summary { list-style:none; cursor:pointer; padding:15px 18px;
-  display:flex; align-items:center; gap:12px; }
+.legend > div { margin:7px 0; color:var(--muted); }
+.legend b { color:var(--ink); font-family:var(--mono); font-size:12.5px; }
+.legend .note { font-family:var(--serif); font-style:italic; font-size:13px;
+  color:var(--muted); margin-top:12px; }
+.agentbars .row { display:grid; grid-template-columns:170px 1fr 78px; gap:12px;
+  align-items:center; margin:9px 0; }
+.agentbars .name { color:var(--ink); font-size:12.5px; white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center;
+  gap:9px; }
+.agentbars .name svg { flex:0 0 auto; color:var(--muted); }
+.agentbars .val { text-align:right; font-family:var(--mono); font-size:11.5px;
+  color:var(--ink); }
+.stack { display:flex; height:11px; background:var(--track); }
+.stack .s { height:100%; }
+.bar { background:var(--track); height:5px; margin-top:6px; max-width:170px; }
+.bar-fill { height:100%; }
+
+/* ---- top wins ---- */
+.opps-wrap { padding:26px 0 20px; border-bottom:1px solid var(--hair); }
+.opps { list-style:none; padding:0; margin:0; column-gap:44px; }
+.opps li { display:flex; gap:14px; align-items:baseline; padding:7px 0;
+  border-bottom:1px solid var(--hair); font-size:13.5px;
+  break-inside:avoid; }
+.opps li:last-child { border-bottom:0; }
+.opps .rank { font-family:var(--mono); color:var(--faint); font-size:10.5px;
+  min-width:16px; text-align:right; }
+.opps .n { font-family:var(--mono); font-size:12.5px; font-weight:700;
+  min-width:74px; }
+.opps .what { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis;
+  white-space:nowrap; }
+.opps .who { color:var(--faint); font-size:12px; }
+@media (min-width:760px) { .opps { columns:2; } }
+
+/* ---- toolbar ---- */
+.toolbar { position:sticky; top:0; z-index:20; display:flex; gap:8px;
+  align-items:center; flex-wrap:wrap; padding:12px 0;
+  background:var(--paper); border-bottom:1px solid var(--hair); }
+.chip { border:1px solid var(--ink); background:transparent; color:var(--muted);
+  padding:5px 12px; font-family:var(--mono); font-size:10.5px;
+  letter-spacing:.1em; text-transform:uppercase; user-select:none;
+  display:inline-flex; align-items:center; gap:7px;
+  border-color:var(--hair); transition:border-color .15s,color .15s,background .15s; }
+.chip .cdot { width:7px; height:7px; background:var(--faint); }
+.chip[data-f="safe"] .cdot { background:var(--safe); }
+.chip[data-f="review"] .cdot { background:var(--review); }
+.chip[data-f="keep"] .cdot { background:var(--keep); }
+.chip .ct { color:var(--faint); }
+.chip.active { color:var(--ink); border-color:var(--ink); }
+.chip:hover { color:var(--ink); }
+.search { flex:1; min-width:170px; max-width:330px; margin-left:auto;
+  position:relative; }
+.search input { width:100%; background:transparent; border:1px solid var(--hair);
+  color:var(--ink); padding:6px 12px 6px 31px; font-family:var(--mono);
+  font-size:11.5px; }
+.search input::placeholder { color:var(--faint); }
+.search input:focus { outline:none; border-color:var(--ink); }
+.search svg { position:absolute; left:10px; top:50%; transform:translateY(-50%);
+  color:var(--faint); pointer-events:none; }
+.tbtn { background:none; border:none; color:var(--muted); font-family:var(--mono);
+  font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+  padding:5px 4px; transition:color .15s; }
+.tbtn:hover { color:var(--ink); }
+
+/* ---- agent sections ---- */
+.findings { margin-top:30px; }
+.findings > .rulehead { border-top:2px solid var(--rule); padding-top:12px; }
+.findings > .rulehead h2 { font-family:var(--serif); font-size:20px;
+  font-weight:700; letter-spacing:0; text-transform:none; }
+details.agent { border-bottom:1px solid var(--hair); }
+details.agent > summary { list-style:none; padding:16px 0;
+  display:flex; align-items:center; gap:14px; }
 details.agent > summary::-webkit-details-marker { display:none; }
-summary .ic { font-size:20px; }
-summary .t { font-weight:600; font-size:15px; }
-summary .s { color:var(--muted); font-size:13px; margin-left:auto; text-align:right; }
-summary .chev { color:var(--muted); transition:transform .15s; }
+summary:hover .t { text-decoration:underline; text-underline-offset:3px; }
+summary .ic { color:var(--ink); display:flex; flex:0 0 auto; }
+summary .t { font-family:var(--serif); font-weight:700; font-size:17px; }
+summary .status { font-family:var(--mono); font-size:9.5px; letter-spacing:.14em;
+  text-transform:uppercase; padding:2px 7px; border:1px solid var(--hair);
+  color:var(--muted); }
+summary .status.error, summary .status.timeout { color:var(--danger);
+  border-color:var(--danger); }
+summary .s { color:var(--muted); font-size:12px; margin-left:auto;
+  text-align:right; font-family:var(--mono); min-width:0; }
+summary .s b { color:var(--safe); font-weight:700; }
+summary .chev { color:var(--faint); transition:transform .15s; flex:0 0 auto; }
 details[open] summary .chev { transform:rotate(90deg); }
-.status { font-size:11px; padding:2px 8px; border-radius:20px; border:1px solid var(--border); }
-.status.ok { color:var(--safe); } .status.skipped { color:var(--muted); }
-.status.error,.status.timeout { color:#f85149; }
-.notes { margin:0 18px 12px; padding:10px 14px; background:var(--panel2);
-  border-left:3px solid var(--accent); border-radius:6px; font-size:13px; color:var(--muted); }
-table { width:100%; border-collapse:collapse; font-size:13px; }
-th,td { text-align:left; padding:9px 18px; border-top:1px solid var(--border); vertical-align:top; }
-th { color:var(--muted); font-weight:600; cursor:pointer; user-select:none; white-space:nowrap; }
-th:hover { color:var(--text); }
-td.size { font-variant-numeric:tabular-nums; white-space:nowrap; width:200px; }
-td.size .n { display:inline-block; min-width:66px; }
-.path { color:var(--muted); font-size:12px; word-break:break-all; }
-.tag { font-size:11px; padding:2px 9px; border-radius:20px; white-space:nowrap; font-weight:600; }
-.tag-safe { background:rgba(63,185,80,.15); color:var(--safe); }
-.tag-review { background:rgba(210,153,34,.15); color:var(--review); }
-.tag-keep { background:rgba(139,148,158,.14); color:var(--keep); }
-.cmd { display:flex; gap:8px; align-items:center; margin-top:6px; }
-code.sg { background:#0b0f16; border:1px solid var(--border); border-radius:6px;
-  padding:3px 8px; font-size:12px; color:#e6edf3; word-break:break-all; }
-button.copy { background:var(--panel2); border:1px solid var(--border); color:var(--muted);
-  border-radius:6px; padding:3px 9px; font-size:11px; cursor:pointer; }
-button.copy:hover { color:var(--text); }
-.filters { display:flex; gap:8px; align-items:center; margin:18px 0; flex-wrap:wrap; }
-.chip { border:1px solid var(--border); background:var(--panel); color:var(--muted);
-  border-radius:20px; padding:5px 14px; font-size:12px; cursor:pointer; }
-.chip.active { color:var(--text); border-color:var(--accent); }
-.opps li { margin:6px 0; display:flex; gap:10px; align-items:center; }
-.opps .n { font-variant-numeric:tabular-nums; min-width:74px; color:var(--safe); font-weight:600; }
-.foot { margin-top:40px; padding-top:18px; border-top:1px solid var(--border);
-  color:var(--muted); font-size:12px; }
-.disclaimer { background:rgba(210,153,34,.08); border:1px solid rgba(210,153,34,.3);
-  border-radius:10px; padding:12px 16px; margin:20px 0; font-size:13px; }
+.notes { margin:0 0 14px; padding:9px 14px; border-left:2px solid var(--ink);
+  font-family:var(--serif); font-style:italic; font-size:13.5px;
+  color:var(--muted); background:var(--panel); }
+
+/* ---- tables ---- */
+table { width:100%; border-collapse:collapse; font-size:13px; margin-bottom:18px; }
+th,td { text-align:left; padding:10px 14px 10px 0; vertical-align:top;
+  border-top:1px solid var(--hair); }
+td { overflow-wrap:anywhere; }
+th { font-family:var(--mono); color:var(--muted); font-weight:600;
+  user-select:none; white-space:nowrap; font-size:10px; letter-spacing:.14em;
+  text-transform:uppercase; border-top:0; }
+th:hover { color:var(--ink); }
+td.size { white-space:nowrap; width:180px; }
+td.size .n { font-family:var(--mono); font-size:12.5px; font-weight:600;
+  display:inline-block; min-width:64px; }
+td:last-child { width:130px; }
+.path { color:var(--faint); font-size:11px; word-break:break-all;
+  font-family:var(--mono); margin-top:3px; }
+.detail { color:var(--muted); font-size:12.5px; margin-top:3px; }
+.tag { font-family:var(--mono); font-size:10px; letter-spacing:.08em;
+  text-transform:uppercase; white-space:nowrap; font-weight:600;
+  display:inline-flex; align-items:center; gap:6px; }
+.tag-dot { width:7px; height:7px; background:currentColor; }
+.tag-safe { color:var(--safe); }
+.tag-review { color:var(--review); }
+.tag-keep { color:var(--keep); }
+.cmd { display:flex; gap:8px; align-items:center; margin-top:7px; flex-wrap:wrap; }
+.cmd code { min-width:120px; }
+code.sg { background:var(--panel); border:1px solid var(--hair);
+  padding:4px 9px; font-size:11.5px; color:var(--ink); word-break:break-all; }
+button.copy { background:transparent; border:1px solid var(--hair);
+  color:var(--muted); padding:4px 9px; font-family:var(--mono); font-size:10px;
+  letter-spacing:.1em; text-transform:uppercase; flex:0 0 auto;
+  display:inline-flex; align-items:center; gap:6px;
+  transition:color .15s,border-color .15s; }
+button.copy:hover { color:var(--ink); border-color:var(--ink); }
+button.copy.done { color:var(--safe); border-color:var(--safe); }
+
+/* ---- footer ---- */
+.disclaimer { display:flex; gap:13px; border-top:2px solid var(--rule);
+  padding:16px 0 0; margin-top:34px; font-family:var(--serif); font-size:14px;
+  color:var(--muted); line-height:1.6; }
+.disclaimer b { color:var(--ink); }
+.disclaimer svg { flex:0 0 auto; color:var(--ink); margin-top:2px; }
+.foot { margin-top:20px; font-family:var(--mono); font-size:10.5px;
+  letter-spacing:.06em; color:var(--faint); }
+.foot code.sg { font-size:10.5px; padding:2px 6px; }
+
+@media (max-width:720px) {
+  .cards { grid-template-columns:1fr; }
+  .card + .card { border-left:0; border-top:1px solid var(--hair);
+    padding-left:0; }
+  .headline .big { font-size:54px; }
+  .agentbars .row { grid-template-columns:120px 1fr 70px; }
+  td.size { width:110px; }
+  td:last-child { width:34px; }
+  .tag { font-size:0; gap:0; }
+  .tag .tag-dot { width:9px; height:9px; }
+  .opps .tag { display:none; }
+  summary .s { display:none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition:none !important; }
+}
+@media print {
+  .toolbar, button.copy { display:none; }
+  .wrap { padding:0; }
+}
 </style></head><body><div class="wrap">
-<div class="hero">
+<header class="masthead">
+  <div class="row1">
+    <div class="wordmark">Diskovery<span class="dot">.</span></div>
+    <div class="doc">Storage audit · read-only</div>
+  </div>
+  <div class="dateline"><span>Machine <b>sample-mac</b></span><span>macOS <b>26.5.1</b></span><span>Disk <b>227.6 GB</b> used of <b>493.9 GB</b></span><span>Scan <b>thorough</b> in <b>47s</b></span><span><b>2026-07-01 02:30</b></span></div>
+</header>
+<div class="headline">
   <div>
-    <h1><span class="logo">◆ Diskovery</span></h1>
-    <div class="sub">sample-mac · macOS 26.5.1
-      · 227.6 GB used · 266.3 GB free of 493.9 GB</div>
-    <div class="sub">Generated 2026-07-01 02:30
-      · thorough scan
-      · 47s</div>
+    <div class="k" style="margin-bottom:10px">Reclaimable now</div>
+    <div class="big">54.0<small> GB</small></div>
   </div>
-  <div class="headline">
-    <div class="big">54.0 GB</div>
-    <div class="sub">safe to reclaim now</div>
-    <div class="big rev">+ 48.5 GB</div>
-    <div class="sub">after review</div>
-  </div>
+  <p class="caption">can be freed today with the copy-paste commands in this
+    report, <span class="and">and another</span> <b class="rev">48.5 GB</b>
+    <span class="and">once you've had a look at what it is.</span></p>
 </div>
+<div class="diskmap">
+      <div class="rulehead"><h3>The disk, end to end</h3>
+        <span class="aside">493.9 GB total</span></div>
+      <div class="diskbar"><div class="seg" style="width:25.34%;background:#4a4438" title="In use: 125.2 GB"></div><div class="seg" style="width:10.93%;background:var(--safe)" title="Safe to reclaim: 54.0 GB"></div><div class="seg" style="width:9.81%;background:var(--review)" title="Reclaim after review: 48.5 GB"></div><div class="seg" style="width:53.91%;background:var(--paper)" title="Free: 266.3 GB"></div></div><div class="dlegend">
+      <span><span class="swatch" style="background:#4a4438"></span>In use
+        <b>125.2 GB</b></span>
+      <span><span class="swatch" style="background:var(--safe)"></span>Safe to reclaim
+        <b>54.0 GB</b></span>
+      <span><span class="swatch" style="background:var(--review)"></span>After review
+        <b>48.5 GB</b></span>
+      <span><span class="swatch" style="background:var(--paper)"></span>Free
+        <b>266.3 GB</b></span>
+    </div></div>
 <div class="cards">
   <div class="card">
-    <h3>Reclaimable breakdown</h3>
+    <div class="rulehead"><h3>Reclaimable space</h3></div>
     <div class="chart-row">
-      <div class="donut"><svg width="110" height="110" viewBox="0 0 110 110"><circle cx="55" cy="55" r="42" fill="none" stroke="#21262d" stroke-width="14"/>
-      <circle cx="55" cy="55" r="42" fill="none" stroke="var(--review)" stroke-width="14"
-        stroke-dasharray="263.9" transform="rotate(-90 55 55)"/>
-      <circle cx="55" cy="55" r="42" fill="none" stroke="var(--safe)" stroke-width="14"
-        stroke-dasharray="139.1 263.9" transform="rotate(-90 55 55)"/>
-      <text x="55" y="52" text-anchor="middle" fill="#e6edf3" font-size="20"
-        font-weight="700">53%</text>
-      <text x="55" y="70" text-anchor="middle" fill="#8b949e" font-size="10">safe</text></svg></div>
+      <div><svg width="124" height="124" viewBox="0 0 110 110" role="img"
+      aria-label="Reclaimable space: safe versus needs review"><circle cx="55" cy="55" r="40" fill="none" stroke="var(--review)" stroke-width="18"/><circle cx="55" cy="55" r="40" fill="none" stroke="var(--safe)" stroke-width="18" stroke-dasharray="132.5 251.3" transform="rotate(-90 55 55)"/>
+      <circle cx="55" cy="55" r="30" fill="var(--paper)"/>
+      <text x="55" y="53" text-anchor="middle" fill="#211d15" font-size="15"
+        font-weight="700" font-family="ui-monospace,Menlo,monospace">102.5 GB</text>
+      <text x="55" y="69" text-anchor="middle" fill="#98917f" font-size="8"
+        letter-spacing="1.5" font-family="ui-monospace,Menlo,monospace">FOUND</text></svg></div>
       <div class="legend">
-        <div><span class="dot" style="background:var(--safe)"></span>
-          Safe · <b>54.0 GB</b></div>
-        <div><span class="dot" style="background:var(--review)"></span>
-          Review · <b>48.5 GB</b></div>
-        <div style="color:var(--muted);margin-top:6px">Total opportunity
-          <b>102.5 GB</b></div>
+        <div><span class="swatch" style="background:var(--safe)"></span>
+          Safe to reclaim <b>54.0 GB</b></div>
+        <div><span class="swatch" style="background:var(--review)"></span>
+          Needs review <b>48.5 GB</b></div>
+        <div class="note">53% of what was found needs no review at all.</div>
       </div>
     </div>
   </div>
   <div class="card">
-    <h3>Reclaimable by agent</h3>
-    <div class="agentbars"><div class="row"><div class="name">🎬 Creative App Caches</div>
-          <div class="bar"><div class="bar-fill" style="width:100.0%;background:#58a6ff"></div></div><div class="val">28.0 GB</div></div><div class="row"><div class="name">🧹 Caches &amp; Logs</div>
-          <div class="bar"><div class="bar-fill" style="width:92.2%;background:#58a6ff"></div></div><div class="val">25.8 GB</div></div><div class="row"><div class="name">🐳 Docker / Containers</div>
-          <div class="bar"><div class="bar-fill" style="width:69.1%;background:#58a6ff"></div></div><div class="val">19.3 GB</div></div><div class="row"><div class="name">📦 Node / npm</div>
-          <div class="bar"><div class="bar-fill" style="width:26.3%;background:#58a6ff"></div></div><div class="val">7.4 GB</div></div><div class="row"><div class="name">🗄️ Large &amp; Old Files</div>
-          <div class="bar"><div class="bar-fill" style="width:26.2%;background:#58a6ff"></div></div><div class="val">7.3 GB</div></div><div class="row"><div class="name">💽 Disk Overview</div>
-          <div class="bar"><div class="bar-fill" style="width:15.7%;background:#58a6ff"></div></div><div class="val">4.4 GB</div></div><div class="row"><div class="name">🧬 Duplicate Files</div>
-          <div class="bar"><div class="bar-fill" style="width:12.9%;background:#58a6ff"></div></div><div class="val">3.6 GB</div></div><div class="row"><div class="name">🍺 Homebrew</div>
-          <div class="bar"><div class="bar-fill" style="width:11.8%;background:#58a6ff"></div></div><div class="val">3.3 GB</div></div></div>
+    <div class="rulehead"><h3>Where it sits</h3>
+      <span class="aside">safe + review, by agent</span></div>
+    <div class="agentbars"><div class="row">
+          <div class="name"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="7" y1="3" x2="7" y2="21"/><line x1="17" y1="3" x2="17" y2="21"/><line x1="2" y1="12" x2="22" y2="12"/></svg><span>Creative App Caches</span></div>
+          <div class="stack" style="width:100.0%">
+            <div class="s" style="width:77.0%;background:var(--safe)"></div>
+            <div class="s" style="width:23.0%;background:var(--review)"></div>
+          </div>
+          <div class="val">28.0 GB</div></div><div class="row">
+          <div class="name"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3-1.9 4.6L5.5 9.5l4.6 1.9L12 16l1.9-4.6 4.6-1.9-4.6-1.9z"/><path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 17v4"/><path d="M17 19h4"/></svg><span>Caches &amp; Logs</span></div>
+          <div class="stack" style="width:92.2%">
+            <div class="s" style="width:50.0%;background:var(--safe)"></div>
+            <div class="s" style="width:50.0%;background:var(--review)"></div>
+          </div>
+          <div class="val">25.8 GB</div></div><div class="row">
+          <div class="name"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg><span>Docker / Containers</span></div>
+          <div class="stack" style="width:69.1%">
+            <div class="s" style="width:0.0%;background:var(--safe)"></div>
+            <div class="s" style="width:100.0%;background:var(--review)"></div>
+          </div>
+          <div class="val">19.3 GB</div></div><div class="row">
+          <div class="name"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg><span>Node / npm</span></div>
+          <div class="stack" style="width:26.3%">
+            <div class="s" style="width:100.0%;background:var(--safe)"></div>
+            <div class="s" style="width:0.0%;background:var(--review)"></div>
+          </div>
+          <div class="val">7.4 GB</div></div><div class="row">
+          <div class="name"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="5" rx="1"/><path d="M4 9v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/><path d="M10 13h4"/></svg><span>Large &amp; Old Files</span></div>
+          <div class="stack" style="width:26.2%">
+            <div class="s" style="width:48.6%;background:var(--safe)"></div>
+            <div class="s" style="width:51.4%;background:var(--review)"></div>
+          </div>
+          <div class="val">7.3 GB</div></div><div class="row">
+          <div class="name"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="12" x2="2" y2="12"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.1z"/><line x1="6" y1="16" x2="6.01" y2="16"/><line x1="10" y1="16" x2="10.01" y2="16"/></svg><span>Disk Overview</span></div>
+          <div class="stack" style="width:15.7%">
+            <div class="s" style="width:100.0%;background:var(--safe)"></div>
+            <div class="s" style="width:0.0%;background:var(--review)"></div>
+          </div>
+          <div class="val">4.4 GB</div></div><div class="row">
+          <div class="name"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Duplicate Files</span></div>
+          <div class="stack" style="width:12.9%">
+            <div class="s" style="width:0.0%;background:var(--safe)"></div>
+            <div class="s" style="width:100.0%;background:var(--review)"></div>
+          </div>
+          <div class="val">3.6 GB</div></div><div class="row">
+          <div class="name"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 5h9v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5z"/><path d="M15 8h2a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-2"/><path d="M6 5c0-1.2 2-2 4.5-2S15 3.8 15 5"/><line x1="9" y1="10" x2="9" y2="16"/><line x1="12" y1="10" x2="12" y2="16"/></svg><span>Homebrew</span></div>
+          <div class="stack" style="width:11.8%">
+            <div class="s" style="width:98.1%;background:var(--safe)"></div>
+            <div class="s" style="width:1.9%;background:var(--review)"></div>
+          </div>
+          <div class="val">3.3 GB</div></div></div>
   </div>
 </div>
-<div class="card" style="margin-bottom:22px">
-      <h3>Biggest opportunities</h3>
-      <ul class="opps" style="list-style:none;padding:0;margin:0"><li><span class="n">19.3 GB</span>
-          <span>🐳 Docker.raw (VM disk image)</span> <span class="tag tag-review" title="Review first">Review first</span></li><li><span class="n">15.0 GB</span>
-          <span>🎬 DaVinci Resolve / CacheClip</span> <span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></li><li><span class="n">12.9 GB</span>
-          <span>🧹 iOS Simulators</span> <span class="tag tag-review" title="Review first">Review first</span></li><li><span class="n">9.6 GB</span>
-          <span>🧹 Xcode DerivedData</span> <span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></li><li><span class="n">6.4 GB</span>
-          <span>🎬 ↳ generated media in Wedding2025.fcpbundle</span> <span class="tag tag-review" title="Review first">Review first</span></li><li><span class="n">4.5 GB</span>
-          <span>📦 … 21 more node_modules</span> <span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></li><li><span class="n">4.4 GB</span>
-          <span>💽 Trash</span> <span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></li><li><span class="n">4.3 GB</span>
-          <span>🎬 DaVinci Resolve / ProxyMedia</span> <span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></li><li><span class="n">3.8 GB</span>
-          <span>🗄️ Downloads/ubuntu-22.04.iso</span> <span class="tag tag-review" title="Review first">Review first</span></li><li><span class="n">3.6 GB</span>
-          <span>🗄️ Installers in Downloads (5)</span> <span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></li><li><span class="n">3.3 GB</span>
-          <span>🍺 Download cache &amp; old versions</span> <span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></li><li><span class="n">2.2 GB</span>
-          <span>🎬 Adobe Media Cache Files</span> <span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></li><li><span class="n">2.1 GB</span>
-          <span>🧬 export-final.mp4 ×3</span> <span class="tag tag-review" title="Review first">Review first</span></li><li><span class="n">1.9 GB</span>
-          <span>🧹 com.apple.Safari</span> <span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></li><li><span class="n">1.5 GB</span>
-          <span>🐍 Projects/ml-thing/.venv</span> <span class="tag tag-review" title="Review first">Review first</span></li></ul></div>
-<div class="filters">
-      <span style="color:var(--muted);font-size:12px">Show:</span>
-      <span class="chip active" data-f="all" onclick="flt(this)">All</span>
-      <span class="chip active" data-f="safe" onclick="flt(this)">Safe</span>
-      <span class="chip active" data-f="review" onclick="flt(this)">Review</span>
-      <span class="chip active" data-f="keep" onclick="flt(this)">Keep</span>
+<div class="opps-wrap">
+      <div class="rulehead"><h3>Biggest wins first</h3>
+        <span class="aside">top 12 findings by size</span></div>
+      <ul class="opps"><li>
+          <span class="rank">01</span>
+          <span class="n" style="color:#a3610c">19.3 GB</span>
+          <span class="what">Docker.raw (VM disk image)
+            <span class="who">— Docker / Containers</span></span>
+          <span class="tag tag-review" title="Review first"><span class="tag-dot"></span>Review first</span></li><li>
+          <span class="rank">02</span>
+          <span class="n" style="color:#1e7a46">15.0 GB</span>
+          <span class="what">DaVinci Resolve / CacheClip
+            <span class="who">— Creative App Caches</span></span>
+          <span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></li><li>
+          <span class="rank">03</span>
+          <span class="n" style="color:#a3610c">12.9 GB</span>
+          <span class="what">iOS Simulators
+            <span class="who">— Caches &amp; Logs</span></span>
+          <span class="tag tag-review" title="Review first"><span class="tag-dot"></span>Review first</span></li><li>
+          <span class="rank">04</span>
+          <span class="n" style="color:#1e7a46">9.6 GB</span>
+          <span class="what">Xcode DerivedData
+            <span class="who">— Caches &amp; Logs</span></span>
+          <span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></li><li>
+          <span class="rank">05</span>
+          <span class="n" style="color:#a3610c">6.4 GB</span>
+          <span class="what">↳ generated media in Wedding2025.fcpbundle
+            <span class="who">— Creative App Caches</span></span>
+          <span class="tag tag-review" title="Review first"><span class="tag-dot"></span>Review first</span></li><li>
+          <span class="rank">06</span>
+          <span class="n" style="color:#1e7a46">4.5 GB</span>
+          <span class="what">… 21 more node_modules
+            <span class="who">— Node / npm</span></span>
+          <span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></li><li>
+          <span class="rank">07</span>
+          <span class="n" style="color:#1e7a46">4.4 GB</span>
+          <span class="what">Trash
+            <span class="who">— Disk Overview</span></span>
+          <span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></li><li>
+          <span class="rank">08</span>
+          <span class="n" style="color:#1e7a46">4.3 GB</span>
+          <span class="what">DaVinci Resolve / ProxyMedia
+            <span class="who">— Creative App Caches</span></span>
+          <span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></li><li>
+          <span class="rank">09</span>
+          <span class="n" style="color:#a3610c">3.8 GB</span>
+          <span class="what">Downloads/ubuntu-22.04.iso
+            <span class="who">— Large &amp; Old Files</span></span>
+          <span class="tag tag-review" title="Review first"><span class="tag-dot"></span>Review first</span></li><li>
+          <span class="rank">10</span>
+          <span class="n" style="color:#1e7a46">3.6 GB</span>
+          <span class="what">Installers in Downloads (5)
+            <span class="who">— Large &amp; Old Files</span></span>
+          <span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></li><li>
+          <span class="rank">11</span>
+          <span class="n" style="color:#1e7a46">3.3 GB</span>
+          <span class="what">Download cache &amp; old versions
+            <span class="who">— Homebrew</span></span>
+          <span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></li><li>
+          <span class="rank">12</span>
+          <span class="n" style="color:#1e7a46">2.2 GB</span>
+          <span class="what">Adobe Media Cache Files
+            <span class="who">— Creative App Caches</span></span>
+          <span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></li></ul></div>
+<div class="toolbar">
+      <button class="chip active" data-f="all" onclick="flt(this)">All</button>
+      <button class="chip active" data-f="safe" onclick="flt(this)"><span class="cdot"></span>Safe<span class="ct">15</span></button>
+      <button class="chip active" data-f="review" onclick="flt(this)"><span class="cdot"></span>Review<span class="ct">15</span></button>
+      <button class="chip active" data-f="keep" onclick="flt(this)"><span class="cdot"></span>Keep<span class="ct">5</span></button>
+      <div class="search"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="q" type="search" placeholder="search findings…"
+          oninput="src(this.value)" aria-label="Search findings"></div>
+      <button class="tbtn" onclick="tgl(true)">Expand</button>
+      <button class="tbtn" onclick="tgl(false)">Collapse</button>
     </div>
+<section class="findings"><div class="rulehead"><h2>Findings, agent by agent</h2></div>
 <details class="agent" open>
       <summary>
-        <span class="ic">💽</span>
+        <span class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="12" x2="2" y2="12"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.1z"/><line x1="6" y1="16" x2="6.01" y2="16"/><line x1="10" y1="16" x2="10.01" y2="16"/></svg></span>
         <span class="t">Disk Overview</span>
-        <span class="status ok">ok</span>
-        <span class="s">212 GB used / 248 GB free</span>
-        <span class="chev">▸</span>
+        <span class="status ok">done</span>
+        <span class="s"><b>4.4 GB</b> · 212 GB used / 248 GB free</span>
+        <span class="chev"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       </summary><div class="notes">3 local snapshot(s) present (purgeable space).</div><table>
           <thead><tr>
-            <th onclick="srt(this,0,'s')">Item</th>
-            <th onclick="srt(this,1,'n')">Size</th>
-            <th onclick="srt(this,2,'s')">Safety</th>
+            <th data-sort onclick="srt(this,0,'s')">Item</th>
+            <th data-sort onclick="srt(this,1,'n')">Size</th>
+            <th data-sort onclick="srt(this,2,'s')">Safety</th>
           </tr></thead><tbody><tr data-safety="keep" data-size="227633266688">
-          <td><b>Macintosh HD — used</b><div class="path">/</div>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">248 GB free of 460 GB</div></td>
-          <td class="size"><span class="n">227.6 GB</span><div class="bar"><div class="bar-fill" style="width:100.0%;background:#8b949e"></div></div></td>
-          <td><span class="tag tag-keep" title="Keep">Keep</span></td></tr><tr data-safety="review" data-size="0">
-          <td><b>3 APFS local snapshot(s)</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Local Time Machine snapshots hold deleted files.</div><div class="cmd"><code class="sg">tmutil thinlocalsnapshots / 999999999999 4</code>
-              <button class="copy" onclick="cp(this)">copy</button></div></td>
-          <td class="size"><span class="n">0 B</span><div class="bar"><div class="bar-fill" style="width:1.5%;background:#d29922"></div></div></td>
-          <td><span class="tag tag-review" title="Review first">Review first</span></td></tr><tr data-safety="safe" data-size="4404019200">
-          <td><b>Trash</b><div class="path">/Users/you/.Trash</div>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Files already in Trash.</div><div class="cmd"><code class="sg">rm -rf ~/.Trash/*</code>
-              <button class="copy" onclick="cp(this)">copy</button></div></td>
-          <td class="size"><span class="n">4.4 GB</span><div class="bar"><div class="bar-fill" style="width:1.9%;background:#3fb950"></div></div></td>
-          <td><span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></td></tr></tbody></table></details>
+          <td><b>Macintosh HD — used</b><div class="path">/</div><div class="detail">248 GB free of 460 GB</div></td>
+          <td class="size"><span class="n">227.6 GB</span><div class="bar"><div class="bar-fill" style="width:100.0%;background:#8a8375"></div></div></td>
+          <td><span class="tag tag-keep" title="Keep"><span class="tag-dot"></span>Keep</span></td></tr><tr data-safety="review" data-size="0">
+          <td><b>3 APFS local snapshot(s)</b><div class="detail">Local Time Machine snapshots hold deleted files.</div><div class="cmd"><code class="sg">tmutil thinlocalsnapshots / 999999999999 4</code>
+              <button class="copy" onclick="cp(this)" aria-label="Copy command">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button></div></td>
+          <td class="size"><span class="n">0 B</span><div class="bar"><div class="bar-fill" style="width:1.5%;background:#a3610c"></div></div></td>
+          <td><span class="tag tag-review" title="Review first"><span class="tag-dot"></span>Review first</span></td></tr><tr data-safety="safe" data-size="4404019200">
+          <td><b>Trash</b><div class="path">/Users/you/.Trash</div><div class="detail">Files already in Trash.</div><div class="cmd"><code class="sg">rm -rf ~/.Trash/*</code>
+              <button class="copy" onclick="cp(this)" aria-label="Copy command">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button></div></td>
+          <td class="size"><span class="n">4.4 GB</span><div class="bar"><div class="bar-fill" style="width:1.9%;background:#1e7a46"></div></div></td>
+          <td><span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></td></tr></tbody></table></details>
 <details class="agent" open>
       <summary>
-        <span class="ic">🍺</span>
+        <span class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 5h9v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5z"/><path d="M15 8h2a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-2"/><path d="M6 5c0-1.2 2-2 4.5-2S15 3.8 15 5"/><line x1="9" y1="10" x2="9" y2="16"/><line x1="12" y1="10" x2="12" y2="16"/></svg></span>
         <span class="t">Homebrew</span>
-        <span class="status ok">ok</span>
-        <span class="s">84 formulae, 12 casks</span>
-        <span class="chev">▸</span>
+        <span class="status ok">done</span>
+        <span class="s"><b>3.3 GB</b> · 84 formulae, 12 casks</span>
+        <span class="chev"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       </summary><div class="notes">6 orphaned dependency formula(e) — `brew autoremove`.</div><table>
           <thead><tr>
-            <th onclick="srt(this,0,'s')">Item</th>
-            <th onclick="srt(this,1,'n')">Size</th>
-            <th onclick="srt(this,2,'s')">Safety</th>
+            <th data-sort onclick="srt(this,0,'s')">Item</th>
+            <th data-sort onclick="srt(this,1,'n')">Size</th>
+            <th data-sort onclick="srt(this,2,'s')">Safety</th>
           </tr></thead><tbody><tr data-safety="safe" data-size="3250585600">
-          <td><b>Download cache &amp; old versions</b><div class="path">/Users/you/Library/Caches/Homebrew</div>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">brew estimates ~3.1GB freeable.</div><div class="cmd"><code class="sg">brew cleanup -s</code>
-              <button class="copy" onclick="cp(this)">copy</button></div></td>
-          <td class="size"><span class="n">3.3 GB</span><div class="bar"><div class="bar-fill" style="width:100.0%;background:#3fb950"></div></div></td>
-          <td><span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></td></tr><tr data-safety="review" data-size="18874368">
-          <td><b>gdbm</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Installed as a dependency; nothing left depends on it.</div><div class="cmd"><code class="sg">brew autoremove</code>
-              <button class="copy" onclick="cp(this)">copy</button></div></td>
-          <td class="size"><span class="n">18.9 MB</span><div class="bar"><div class="bar-fill" style="width:1.5%;background:#d29922"></div></div></td>
-          <td><span class="tag tag-review" title="Review first">Review first</span></td></tr><tr data-safety="review" data-size="44040192">
-          <td><b>libtiff</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Installed as a dependency; nothing left depends on it.</div><div class="cmd"><code class="sg">brew autoremove</code>
-              <button class="copy" onclick="cp(this)">copy</button></div></td>
-          <td class="size"><span class="n">44.0 MB</span><div class="bar"><div class="bar-fill" style="width:1.5%;background:#d29922"></div></div></td>
-          <td><span class="tag tag-review" title="Review first">Review first</span></td></tr><tr data-safety="review" data-size="0">
-          <td><b>9 outdated package(s)</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Newer versions available: node, git, python@3.12 …</div><div class="cmd"><code class="sg">brew upgrade</code>
-              <button class="copy" onclick="cp(this)">copy</button></div></td>
-          <td class="size"><span class="n">0 B</span><div class="bar"><div class="bar-fill" style="width:1.5%;background:#d29922"></div></div></td>
-          <td><span class="tag tag-review" title="Review first">Review first</span></td></tr></tbody></table></details>
+          <td><b>Download cache &amp; old versions</b><div class="path">/Users/you/Library/Caches/Homebrew</div><div class="detail">brew estimates ~3.1GB freeable.</div><div class="cmd"><code class="sg">brew cleanup -s</code>
+              <button class="copy" onclick="cp(this)" aria-label="Copy command">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button></div></td>
+          <td class="size"><span class="n">3.3 GB</span><div class="bar"><div class="bar-fill" style="width:100.0%;background:#1e7a46"></div></div></td>
+          <td><span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></td></tr><tr data-safety="review" data-size="18874368">
+          <td><b>gdbm</b><div class="detail">Installed as a dependency; nothing left depends on it.</div><div class="cmd"><code class="sg">brew autoremove</code>
+              <button class="copy" onclick="cp(this)" aria-label="Copy command">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button></div></td>
+          <td class="size"><span class="n">18.9 MB</span><div class="bar"><div class="bar-fill" style="width:1.5%;background:#a3610c"></div></div></td>
+          <td><span class="tag tag-review" title="Review first"><span class="tag-dot"></span>Review first</span></td></tr><tr data-safety="review" data-size="44040192">
+          <td><b>libtiff</b><div class="detail">Installed as a dependency; nothing left depends on it.</div><div class="cmd"><code class="sg">brew autoremove</code>
+              <button class="copy" onclick="cp(this)" aria-label="Copy command">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button></div></td>
+          <td class="size"><span class="n">44.0 MB</span><div class="bar"><div class="bar-fill" style="width:1.5%;background:#a3610c"></div></div></td>
+          <td><span class="tag tag-review" title="Review first"><span class="tag-dot"></span>Review first</span></td></tr><tr data-safety="review" data-size="0">
+          <td><b>9 outdated package(s)</b><div class="detail">Newer versions available: node, git, python@3.12 …</div><div class="cmd"><code class="sg">brew upgrade</code>
+              <button class="copy" onclick="cp(this)" aria-label="Copy command">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button></div></td>
+          <td class="size"><span class="n">0 B</span><div class="bar"><div class="bar-fill" style="width:1.5%;background:#a3610c"></div></div></td>
+          <td><span class="tag tag-review" title="Review first"><span class="tag-dot"></span>Review first</span></td></tr></tbody></table></details>
 <details class="agent" open>
       <summary>
-        <span class="ic">🐍</span>
+        <span class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span>
         <span class="t">Python Environments</span>
-        <span class="status ok">ok</span>
-        <span class="s">14 venv(s), 220 __pycache__ dirs</span>
-        <span class="chev">▸</span>
+        <span class="status ok">done</span>
+        <span class="s"><b>3.0 GB</b> · 14 venv(s), 220 __pycache__ dirs</span>
+        <span class="chev"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       </summary><div class="notes">4 virtualenv(s) point at a missing interpreter (broken).</div><table>
           <thead><tr>
-            <th onclick="srt(this,0,'s')">Item</th>
-            <th onclick="srt(this,1,'n')">Size</th>
-            <th onclick="srt(this,2,'s')">Safety</th>
+            <th data-sort onclick="srt(this,0,'s')">Item</th>
+            <th data-sort onclick="srt(this,1,'n')">Size</th>
+            <th data-sort onclick="srt(this,2,'s')">Safety</th>
           </tr></thead><tbody><tr data-safety="safe" data-size="933232640">
-          <td><b>pip cache</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Downloaded wheels pip keeps for reinstalls.</div><div class="cmd"><code class="sg">python3 -m pip cache purge</code>
-              <button class="copy" onclick="cp(this)">copy</button></div></td>
-          <td class="size"><span class="n">933.2 MB</span><div class="bar"><div class="bar-fill" style="width:63.6%;background:#3fb950"></div></div></td>
-          <td><span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></td></tr><tr data-safety="review" data-size="335544320">
-          <td><b>Projects/old-scraper/.venv</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Python 3.8. Base interpreter missing — venv is broken/orphaned.</div><div class="cmd"><code class="sg">rm -rf ~/Projects/old-scraper/.venv</code>
-              <button class="copy" onclick="cp(this)">copy</button></div></td>
-          <td class="size"><span class="n">335.5 MB</span><div class="bar"><div class="bar-fill" style="width:22.9%;background:#d29922"></div></div></td>
-          <td><span class="tag tag-review" title="Review first">Review first</span></td></tr><tr data-safety="review" data-size="1468006400">
-          <td><b>Projects/ml-thing/.venv</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Python 3.11. Last touched 8 months ago.</div><div class="cmd"><code class="sg">rm -rf ~/Projects/ml-thing/.venv</code>
-              <button class="copy" onclick="cp(this)">copy</button></div></td>
-          <td class="size"><span class="n">1.5 GB</span><div class="bar"><div class="bar-fill" style="width:100.0%;background:#d29922"></div></div></td>
-          <td><span class="tag tag-review" title="Review first">Review first</span></td></tr><tr data-safety="safe" data-size="77594624">
-          <td><b>__pycache__ (220 dirs)</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Compiled .pyc caches — regenerated automatically.</div><div class="cmd"><code class="sg">find ~ -type d -name __pycache__ -prune -exec rm -rf {} +</code>
-              <button class="copy" onclick="cp(this)">copy</button></div></td>
-          <td class="size"><span class="n">77.6 MB</span><div class="bar"><div class="bar-fill" style="width:5.3%;background:#3fb950"></div></div></td>
-          <td><span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></td></tr><tr data-safety="review" data-size="220200960">
-          <td><b>python.org framework 2.7</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">End-of-life Python — consider removing if unused.</div></td>
-          <td class="size"><span class="n">220.2 MB</span><div class="bar"><div class="bar-fill" style="width:15.0%;background:#d29922"></div></div></td>
-          <td><span class="tag tag-review" title="Review first">Review first</span></td></tr></tbody></table></details>
+          <td><b>pip cache</b><div class="detail">Downloaded wheels pip keeps for reinstalls.</div><div class="cmd"><code class="sg">python3 -m pip cache purge</code>
+              <button class="copy" onclick="cp(this)" aria-label="Copy command">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button></div></td>
+          <td class="size"><span class="n">933.2 MB</span><div class="bar"><div class="bar-fill" style="width:63.6%;background:#1e7a46"></div></div></td>
+          <td><span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></td></tr><tr data-safety="review" data-size="335544320">
+          <td><b>Projects/old-scraper/.venv</b><div class="detail">Python 3.8. Base interpreter missing — venv is broken/orphaned.</div><div class="cmd"><code class="sg">rm -rf ~/Projects/old-scraper/.venv</code>
+              <button class="copy" onclick="cp(this)" aria-label="Copy command">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button></div></td>
+          <td class="size"><span class="n">335.5 MB</span><div class="bar"><div class="bar-fill" style="width:22.9%;background:#a3610c"></div></div></td>
+          <td><span class="tag tag-review" title="Review first"><span class="tag-dot"></span>Review first</span></td></tr><tr data-safety="review" data-size="1468006400">
+          <td><b>Projects/ml-thing/.venv</b><div class="detail">Python 3.11. Last touched 8 months ago.</div><div class="cmd"><code class="sg">rm -rf ~/Projects/ml-thing/.venv</code>
+              <button class="copy" onclick="cp(this)" aria-label="Copy command">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button></div></td>
+          <td class="size"><span class="n">1.5 GB</span><div class="bar"><div class="bar-fill" style="width:100.0%;background:#a3610c"></div></div></td>
+          <td><span class="tag tag-review" title="Review first"><span class="tag-dot"></span>Review first</span></td></tr><tr data-safety="safe" data-size="77594624">
+          <td><b>__pycache__ (220 dirs)</b><div class="detail">Compiled .pyc caches — regenerated automatically.</div><div class="cmd"><code class="sg">find ~ -type d -name __pycache__ -prune -exec rm -rf {} +</code>
+              <button class="copy" onclick="cp(this)" aria-label="Copy command">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button></div></td>
+          <td class="size"><span class="n">77.6 MB</span><div class="bar"><div class="bar-fill" style="width:5.3%;background:#1e7a46"></div></div></td>
+          <td><span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></td></tr><tr data-safety="review" data-size="220200960">
+          <td><b>python.org framework 2.7</b><div class="detail">End-of-life Python — consider removing if unused.</div></td>
+          <td class="size"><span class="n">220.2 MB</span><div class="bar"><div class="bar-fill" style="width:15.0%;background:#a3610c"></div></div></td>
+          <td><span class="tag tag-review" title="Review first"><span class="tag-dot"></span>Review first</span></td></tr></tbody></table></details>
 <details class="agent" open>
       <summary>
-        <span class="ic">📦</span>
+        <span class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg></span>
         <span class="t">Node / npm</span>
-        <span class="status ok">ok</span>
-        <span class="s">23 node_modules, 6.4 GB</span>
-        <span class="chev">▸</span>
+        <span class="status ok">done</span>
+        <span class="s"><b>7.4 GB</b> · 23 node_modules, 6.4 GB</span>
+        <span class="chev"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       </summary><div class="notes">23 node_modules totalling 6.4 GB.</div><table>
           <thead><tr>
-            <th onclick="srt(this,0,'s')">Item</th>
-            <th onclick="srt(this,1,'n')">Size</th>
-            <th onclick="srt(this,2,'s')">Safety</th>
+            <th data-sort onclick="srt(this,0,'s')">Item</th>
+            <th data-sort onclick="srt(this,1,'n')">Size</th>
+            <th data-sort onclick="srt(this,2,'s')">Safety</th>
           </tr></thead><tbody><tr data-safety="safe" data-size="1258291200">
-          <td><b>Projects/dashboard</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Rebuildable with install. Project last touched 5 months ago.</div><div class="cmd"><code class="sg">rm -rf ~/Projects/dashboard/node_modules</code>
-              <button class="copy" onclick="cp(this)">copy</button></div></td>
-          <td class="size"><span class="n">1.3 GB</span><div class="bar"><div class="bar-fill" style="width:28.2%;background:#3fb950"></div></div></td>
-          <td><span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></td></tr><tr data-safety="safe" data-size="985661440">
-          <td><b>Projects/old-site</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Rebuildable with install. Project last touched 1.2 years ago.</div><div class="cmd"><code class="sg">rm -rf ~/Projects/old-site/node_modules</code>
-              <button class="copy" onclick="cp(this)">copy</button></div></td>
-          <td class="size"><span class="n">985.7 MB</span><div class="bar"><div class="bar-fill" style="width:22.1%;background:#3fb950"></div></div></td>
-          <td><span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></td></tr><tr data-safety="safe" data-size="4466933760">
-          <td><b>… 21 more node_modules</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Smaller/older dependency trees rolled up.</div></td>
-          <td class="size"><span class="n">4.5 GB</span><div class="bar"><div class="bar-fill" style="width:100.0%;background:#3fb950"></div></div></td>
-          <td><span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></td></tr><tr data-safety="safe" data-size="639631360">
-          <td><b>npm cache</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Package manager download cache.</div><div class="cmd"><code class="sg">npm cache clean --force</code>
-              <button class="copy" onclick="cp(this)">copy</button></div></td>
-          <td class="size"><span class="n">639.6 MB</span><div class="bar"><div class="bar-fill" style="width:14.3%;background:#3fb950"></div></div></td>
-          <td><span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></td></tr></tbody></table></details>
+          <td><b>Projects/dashboard</b><div class="detail">Rebuildable with install. Project last touched 5 months ago.</div><div class="cmd"><code class="sg">rm -rf ~/Projects/dashboard/node_modules</code>
+              <button class="copy" onclick="cp(this)" aria-label="Copy command">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button></div></td>
+          <td class="size"><span class="n">1.3 GB</span><div class="bar"><div class="bar-fill" style="width:28.2%;background:#1e7a46"></div></div></td>
+          <td><span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></td></tr><tr data-safety="safe" data-size="985661440">
+          <td><b>Projects/old-site</b><div class="detail">Rebuildable with install. Project last touched 1.2 years ago.</div><div class="cmd"><code class="sg">rm -rf ~/Projects/old-site/node_modules</code>
+              <button class="copy" onclick="cp(this)" aria-label="Copy command">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button></div></td>
+          <td class="size"><span class="n">985.7 MB</span><div class="bar"><div class="bar-fill" style="width:22.1%;background:#1e7a46"></div></div></td>
+          <td><span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></td></tr><tr data-safety="safe" data-size="4466933760">
+          <td><b>… 21 more node_modules</b><div class="detail">Smaller/older dependency trees rolled up.</div></td>
+          <td class="size"><span class="n">4.5 GB</span><div class="bar"><div class="bar-fill" style="width:100.0%;background:#1e7a46"></div></div></td>
+          <td><span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></td></tr><tr data-safety="safe" data-size="639631360">
+          <td><b>npm cache</b><div class="detail">Package manager download cache.</div><div class="cmd"><code class="sg">npm cache clean --force</code>
+              <button class="copy" onclick="cp(this)" aria-label="Copy command">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button></div></td>
+          <td class="size"><span class="n">639.6 MB</span><div class="bar"><div class="bar-fill" style="width:14.3%;background:#1e7a46"></div></div></td>
+          <td><span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></td></tr></tbody></table></details>
 <details class="agent" open>
       <summary>
-        <span class="ic">🐳</span>
+        <span class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>
         <span class="t">Docker / Containers</span>
-        <span class="status ok">ok</span>
-        <span class="s">daemon down — on-disk footprint only</span>
-        <span class="chev">▸</span>
+        <span class="status ok">done</span>
+        <span class="s"><b>19.3 GB</b> · daemon down — on-disk footprint only</span>
+        <span class="chev"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       </summary><div class="notes">Docker daemon is not running — reporting on-disk VM footprint only.</div><table>
           <thead><tr>
-            <th onclick="srt(this,0,'s')">Item</th>
-            <th onclick="srt(this,1,'n')">Size</th>
-            <th onclick="srt(this,2,'s')">Safety</th>
+            <th data-sort onclick="srt(this,0,'s')">Item</th>
+            <th data-sort onclick="srt(this,1,'n')">Size</th>
+            <th data-sort onclick="srt(this,2,'s')">Safety</th>
           </tr></thead><tbody><tr data-safety="review" data-size="19327352832">
-          <td><b>Docker.raw (VM disk image)</b><div class="path">/Users/you/Library/Containers/com.docker.docker/.../Docker.raw</div>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Docker Desktop&#x27;s virtual disk. It does NOT auto-shrink after prune.</div><div class="cmd"><code class="sg"># Docker Desktop → Troubleshoot → Clean / Purge data</code>
-              <button class="copy" onclick="cp(this)">copy</button></div></td>
-          <td class="size"><span class="n">19.3 GB</span><div class="bar"><div class="bar-fill" style="width:100.0%;background:#d29922"></div></div></td>
-          <td><span class="tag tag-review" title="Review first">Review first</span></td></tr></tbody></table></details>
+          <td><b>Docker.raw (VM disk image)</b><div class="path">/Users/you/Library/Containers/com.docker.docker/.../Docker.raw</div><div class="detail">Docker Desktop&#x27;s virtual disk. It does NOT auto-shrink after prune.</div><div class="cmd"><code class="sg"># Docker Desktop → Troubleshoot → Clean / Purge data</code>
+              <button class="copy" onclick="cp(this)" aria-label="Copy command">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button></div></td>
+          <td class="size"><span class="n">19.3 GB</span><div class="bar"><div class="bar-fill" style="width:100.0%;background:#a3610c"></div></div></td>
+          <td><span class="tag tag-review" title="Review first"><span class="tag-dot"></span>Review first</span></td></tr></tbody></table></details>
 <details class="agent" open>
       <summary>
-        <span class="ic">🧹</span>
+        <span class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3-1.9 4.6L5.5 9.5l4.6 1.9L12 16l1.9-4.6 4.6-1.9-4.6-1.9z"/><path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 17v4"/><path d="M17 19h4"/></svg></span>
         <span class="t">Caches &amp; Logs</span>
-        <span class="status ok">ok</span>
-        <span class="s">~5 GB in user caches</span>
-        <span class="chev">▸</span>
+        <span class="status ok">done</span>
+        <span class="s"><b>25.8 GB</b> · ~5 GB in user caches</span>
+        <span class="chev"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       </summary><table>
           <thead><tr>
-            <th onclick="srt(this,0,'s')">Item</th>
-            <th onclick="srt(this,1,'n')">Size</th>
-            <th onclick="srt(this,2,'s')">Safety</th>
+            <th data-sort onclick="srt(this,0,'s')">Item</th>
+            <th data-sort onclick="srt(this,1,'n')">Size</th>
+            <th data-sort onclick="srt(this,2,'s')">Safety</th>
           </tr></thead><tbody><tr data-safety="safe" data-size="1887436800">
-          <td><b>com.apple.Safari</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Application cache — rebuilt on demand.</div></td>
-          <td class="size"><span class="n">1.9 GB</span><div class="bar"><div class="bar-fill" style="width:14.6%;background:#3fb950"></div></div></td>
-          <td><span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></td></tr><tr data-safety="safe" data-size="1363148800">
-          <td><b>Google/Chrome</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Application cache — rebuilt on demand.</div></td>
-          <td class="size"><span class="n">1.4 GB</span><div class="bar"><div class="bar-fill" style="width:10.6%;background:#3fb950"></div></div></td>
-          <td><span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></td></tr><tr data-safety="safe" data-size="9646899200">
-          <td><b>Xcode DerivedData</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Xcode build intermediates — rebuilt on next build.</div><div class="cmd"><code class="sg">rm -rf ~/Library/Developer/Xcode/DerivedData/*</code>
-              <button class="copy" onclick="cp(this)">copy</button></div></td>
-          <td class="size"><span class="n">9.6 GB</span><div class="bar"><div class="bar-fill" style="width:74.9%;background:#3fb950"></div></div></td>
-          <td><span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></td></tr><tr data-safety="review" data-size="12884901888">
-          <td><b>iOS Simulators</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Installed simulator runtimes — large; delete unused ones.</div><div class="cmd"><code class="sg">xcrun simctl delete unavailable</code>
-              <button class="copy" onclick="cp(this)">copy</button></div></td>
-          <td class="size"><span class="n">12.9 GB</span><div class="bar"><div class="bar-fill" style="width:100.0%;background:#d29922"></div></div></td>
-          <td><span class="tag tag-review" title="Review first">Review first</span></td></tr></tbody></table></details>
+          <td><b>com.apple.Safari</b><div class="detail">Application cache — rebuilt on demand.</div></td>
+          <td class="size"><span class="n">1.9 GB</span><div class="bar"><div class="bar-fill" style="width:14.6%;background:#1e7a46"></div></div></td>
+          <td><span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></td></tr><tr data-safety="safe" data-size="1363148800">
+          <td><b>Google/Chrome</b><div class="detail">Application cache — rebuilt on demand.</div></td>
+          <td class="size"><span class="n">1.4 GB</span><div class="bar"><div class="bar-fill" style="width:10.6%;background:#1e7a46"></div></div></td>
+          <td><span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></td></tr><tr data-safety="safe" data-size="9646899200">
+          <td><b>Xcode DerivedData</b><div class="detail">Xcode build intermediates — rebuilt on next build.</div><div class="cmd"><code class="sg">rm -rf ~/Library/Developer/Xcode/DerivedData/*</code>
+              <button class="copy" onclick="cp(this)" aria-label="Copy command">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button></div></td>
+          <td class="size"><span class="n">9.6 GB</span><div class="bar"><div class="bar-fill" style="width:74.9%;background:#1e7a46"></div></div></td>
+          <td><span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></td></tr><tr data-safety="review" data-size="12884901888">
+          <td><b>iOS Simulators</b><div class="detail">Installed simulator runtimes — large; delete unused ones.</div><div class="cmd"><code class="sg">xcrun simctl delete unavailable</code>
+              <button class="copy" onclick="cp(this)" aria-label="Copy command">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button></div></td>
+          <td class="size"><span class="n">12.9 GB</span><div class="bar"><div class="bar-fill" style="width:100.0%;background:#a3610c"></div></div></td>
+          <td><span class="tag tag-review" title="Review first"><span class="tag-dot"></span>Review first</span></td></tr></tbody></table></details>
 <details class="agent" open>
       <summary>
-        <span class="ic">🎬</span>
+        <span class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="7" y1="3" x2="7" y2="21"/><line x1="17" y1="3" x2="17" y2="21"/><line x1="2" y1="12" x2="22" y2="12"/></svg></span>
         <span class="t">Creative App Caches</span>
-        <span class="status ok">ok</span>
-        <span class="s">~24 GB in creative caches</span>
-        <span class="chev">▸</span>
+        <span class="status ok">done</span>
+        <span class="s"><b>28.0 GB</b> · ~24 GB in creative caches</span>
+        <span class="chev"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       </summary><div class="notes">~18 GB of DaVinci render/proxy cache is reclaimable.</div><table>
           <thead><tr>
-            <th onclick="srt(this,0,'s')">Item</th>
-            <th onclick="srt(this,1,'n')">Size</th>
-            <th onclick="srt(this,2,'s')">Safety</th>
+            <th data-sort onclick="srt(this,0,'s')">Item</th>
+            <th data-sort onclick="srt(this,1,'n')">Size</th>
+            <th data-sort onclick="srt(this,2,'s')">Safety</th>
           </tr></thead><tbody><tr data-safety="safe" data-size="15032385536">
-          <td><b>DaVinci Resolve / CacheClip</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Render/proxy cache — regenerated on playback.</div><div class="cmd"><code class="sg">rm -rf &#x27;~/Movies/DaVinci Resolve/CacheClip&#x27;/*</code>
-              <button class="copy" onclick="cp(this)">copy</button></div></td>
-          <td class="size"><span class="n">15.0 GB</span><div class="bar"><div class="bar-fill" style="width:22.6%;background:#3fb950"></div></div></td>
-          <td><span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></td></tr><tr data-safety="safe" data-size="4294967296">
-          <td><b>DaVinci Resolve / ProxyMedia</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Render/proxy cache — regenerated on playback.</div></td>
-          <td class="size"><span class="n">4.3 GB</span><div class="bar"><div class="bar-fill" style="width:6.5%;background:#3fb950"></div></div></td>
-          <td><span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></td></tr><tr data-safety="keep" data-size="66571993088">
-          <td><b>Wedding2025.fcpbundle</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Final Cut library (projects + media). Keep.</div></td>
-          <td class="size"><span class="n">66.6 GB</span><div class="bar"><div class="bar-fill" style="width:100.0%;background:#8b949e"></div></div></td>
-          <td><span class="tag tag-keep" title="Keep">Keep</span></td></tr><tr data-safety="review" data-size="6442450944">
-          <td><b>↳ generated media in Wedding2025.fcpbundle</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Render/transcoded files inside the library — regenerable.</div></td>
-          <td class="size"><span class="n">6.4 GB</span><div class="bar"><div class="bar-fill" style="width:9.7%;background:#d29922"></div></div></td>
-          <td><span class="tag tag-review" title="Review first">Review first</span></td></tr><tr data-safety="safe" data-size="2202009600">
-          <td><b>Adobe Media Cache Files</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Adobe media/peak cache — rebuilt on demand.</div></td>
-          <td class="size"><span class="n">2.2 GB</span><div class="bar"><div class="bar-fill" style="width:3.3%;background:#3fb950"></div></div></td>
-          <td><span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></td></tr></tbody></table></details>
+          <td><b>DaVinci Resolve / CacheClip</b><div class="detail">Render/proxy cache — regenerated on playback.</div><div class="cmd"><code class="sg">rm -rf &#x27;~/Movies/DaVinci Resolve/CacheClip&#x27;/*</code>
+              <button class="copy" onclick="cp(this)" aria-label="Copy command">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button></div></td>
+          <td class="size"><span class="n">15.0 GB</span><div class="bar"><div class="bar-fill" style="width:22.6%;background:#1e7a46"></div></div></td>
+          <td><span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></td></tr><tr data-safety="safe" data-size="4294967296">
+          <td><b>DaVinci Resolve / ProxyMedia</b><div class="detail">Render/proxy cache — regenerated on playback.</div></td>
+          <td class="size"><span class="n">4.3 GB</span><div class="bar"><div class="bar-fill" style="width:6.5%;background:#1e7a46"></div></div></td>
+          <td><span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></td></tr><tr data-safety="keep" data-size="66571993088">
+          <td><b>Wedding2025.fcpbundle</b><div class="detail">Final Cut library (projects + media). Keep.</div></td>
+          <td class="size"><span class="n">66.6 GB</span><div class="bar"><div class="bar-fill" style="width:100.0%;background:#8a8375"></div></div></td>
+          <td><span class="tag tag-keep" title="Keep"><span class="tag-dot"></span>Keep</span></td></tr><tr data-safety="review" data-size="6442450944">
+          <td><b>↳ generated media in Wedding2025.fcpbundle</b><div class="detail">Render/transcoded files inside the library — regenerable.</div></td>
+          <td class="size"><span class="n">6.4 GB</span><div class="bar"><div class="bar-fill" style="width:9.7%;background:#a3610c"></div></div></td>
+          <td><span class="tag tag-review" title="Review first"><span class="tag-dot"></span>Review first</span></td></tr><tr data-safety="safe" data-size="2202009600">
+          <td><b>Adobe Media Cache Files</b><div class="detail">Adobe media/peak cache — rebuilt on demand.</div></td>
+          <td class="size"><span class="n">2.2 GB</span><div class="bar"><div class="bar-fill" style="width:3.3%;background:#1e7a46"></div></div></td>
+          <td><span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></td></tr></tbody></table></details>
 <details class="agent" open>
       <summary>
-        <span class="ic">👻</span>
+        <span class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 10h.01"/><path d="M15 10h.01"/><path d="M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z"/></svg></span>
         <span class="t">Orphaned App Data</span>
-        <span class="status ok">ok</span>
-        <span class="s">3 possibly-orphaned folder(s)</span>
-        <span class="chev">▸</span>
+        <span class="status ok">done</span>
+        <span class="s"><b>335.5 MB</b> · 3 possibly-orphaned folder(s)</span>
+        <span class="chev"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       </summary><table>
           <thead><tr>
-            <th onclick="srt(this,0,'s')">Item</th>
-            <th onclick="srt(this,1,'n')">Size</th>
-            <th onclick="srt(this,2,'s')">Safety</th>
+            <th data-sort onclick="srt(this,0,'s')">Item</th>
+            <th data-sort onclick="srt(this,1,'n')">Size</th>
+            <th data-sort onclick="srt(this,2,'s')">Safety</th>
           </tr></thead><tbody><tr data-safety="review" data-size="251658240">
-          <td><b>Sublime Text 3</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">No matching app in /Applications; last modified 1.4 years ago.</div></td>
-          <td class="size"><span class="n">251.7 MB</span><div class="bar"><div class="bar-fill" style="width:100.0%;background:#d29922"></div></div></td>
-          <td><span class="tag tag-review" title="Review first">Review first</span></td></tr><tr data-safety="review" data-size="83886080">
-          <td><b>Vagrant</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">No matching app in /Applications; last modified 2.1 years ago.</div></td>
-          <td class="size"><span class="n">83.9 MB</span><div class="bar"><div class="bar-fill" style="width:33.3%;background:#d29922"></div></div></td>
-          <td><span class="tag tag-review" title="Review first">Review first</span></td></tr></tbody></table></details>
+          <td><b>Sublime Text 3</b><div class="detail">No matching app in /Applications; last modified 1.4 years ago.</div></td>
+          <td class="size"><span class="n">251.7 MB</span><div class="bar"><div class="bar-fill" style="width:100.0%;background:#a3610c"></div></div></td>
+          <td><span class="tag tag-review" title="Review first"><span class="tag-dot"></span>Review first</span></td></tr><tr data-safety="review" data-size="83886080">
+          <td><b>Vagrant</b><div class="detail">No matching app in /Applications; last modified 2.1 years ago.</div></td>
+          <td class="size"><span class="n">83.9 MB</span><div class="bar"><div class="bar-fill" style="width:33.3%;background:#a3610c"></div></div></td>
+          <td><span class="tag tag-review" title="Review first"><span class="tag-dot"></span>Review first</span></td></tr></tbody></table></details>
 <details class="agent" open>
       <summary>
-        <span class="ic">🗄️</span>
+        <span class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="5" rx="1"/><path d="M4 9v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/><path d="M10 13h4"/></svg></span>
         <span class="t">Large &amp; Old Files</span>
-        <span class="status ok">ok</span>
-        <span class="s">largest file 8.2 GB</span>
-        <span class="chev">▸</span>
+        <span class="status ok">done</span>
+        <span class="s"><b>7.3 GB</b> · largest file 8.2 GB</span>
+        <span class="chev"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       </summary><div class="notes">7 large file(s) untouched for over a year.<br>5 installer(s) in Downloads (3.4 GB).</div><table>
           <thead><tr>
-            <th onclick="srt(this,0,'s')">Item</th>
-            <th onclick="srt(this,1,'n')">Size</th>
-            <th onclick="srt(this,2,'s')">Safety</th>
+            <th data-sort onclick="srt(this,0,'s')">Item</th>
+            <th data-sort onclick="srt(this,1,'n')">Size</th>
+            <th data-sort onclick="srt(this,2,'s')">Safety</th>
           </tr></thead><tbody><tr data-safety="keep" data-size="8598323200">
-          <td><b>Movies/screen-recordings/demo-4k.mov</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Largest files in your home (informational).</div></td>
-          <td class="size"><span class="n">8.6 GB</span><div class="bar"><div class="bar-fill" style="width:17.4%;background:#8b949e"></div></div></td>
-          <td><span class="tag tag-keep" title="Keep">Keep</span></td></tr><tr data-safety="review" data-size="3774873600">
-          <td><b>Downloads/ubuntu-22.04.iso</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">≥50 MB and not modified in 1.6 years — archive candidate.</div></td>
-          <td class="size"><span class="n">3.8 GB</span><div class="bar"><div class="bar-fill" style="width:7.6%;background:#d29922"></div></div></td>
-          <td><span class="tag tag-review" title="Review first">Review first</span></td></tr><tr data-safety="safe" data-size="3565158400">
-          <td><b>Installers in Downloads (5)</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">Disk images/archives — usually safe to delete after install.</div></td>
-          <td class="size"><span class="n">3.6 GB</span><div class="bar"><div class="bar-fill" style="width:7.2%;background:#3fb950"></div></div></td>
-          <td><span class="tag tag-safe" title="Safe to reclaim">Safe to reclaim</span></td></tr><tr data-safety="keep" data-size="49392123904">
-          <td><b>.mov</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">38 file(s) of this type.</div></td>
-          <td class="size"><span class="n">49.4 GB</span><div class="bar"><div class="bar-fill" style="width:100.0%;background:#8b949e"></div></div></td>
-          <td><span class="tag tag-keep" title="Keep">Keep</span></td></tr><tr data-safety="keep" data-size="12884901888">
-          <td><b>.psd</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">61 file(s) of this type.</div></td>
-          <td class="size"><span class="n">12.9 GB</span><div class="bar"><div class="bar-fill" style="width:26.1%;background:#8b949e"></div></div></td>
-          <td><span class="tag tag-keep" title="Keep">Keep</span></td></tr></tbody></table></details>
+          <td><b>Movies/screen-recordings/demo-4k.mov</b><div class="detail">Largest files in your home (informational).</div></td>
+          <td class="size"><span class="n">8.6 GB</span><div class="bar"><div class="bar-fill" style="width:17.4%;background:#8a8375"></div></div></td>
+          <td><span class="tag tag-keep" title="Keep"><span class="tag-dot"></span>Keep</span></td></tr><tr data-safety="review" data-size="3774873600">
+          <td><b>Downloads/ubuntu-22.04.iso</b><div class="detail">≥50 MB and not modified in 1.6 years — archive candidate.</div></td>
+          <td class="size"><span class="n">3.8 GB</span><div class="bar"><div class="bar-fill" style="width:7.6%;background:#a3610c"></div></div></td>
+          <td><span class="tag tag-review" title="Review first"><span class="tag-dot"></span>Review first</span></td></tr><tr data-safety="safe" data-size="3565158400">
+          <td><b>Installers in Downloads (5)</b><div class="detail">Disk images/archives — usually safe to delete after install.</div></td>
+          <td class="size"><span class="n">3.6 GB</span><div class="bar"><div class="bar-fill" style="width:7.2%;background:#1e7a46"></div></div></td>
+          <td><span class="tag tag-safe" title="Safe to reclaim"><span class="tag-dot"></span>Safe to reclaim</span></td></tr><tr data-safety="keep" data-size="49392123904">
+          <td><b>.mov</b><div class="detail">38 file(s) of this type.</div></td>
+          <td class="size"><span class="n">49.4 GB</span><div class="bar"><div class="bar-fill" style="width:100.0%;background:#8a8375"></div></div></td>
+          <td><span class="tag tag-keep" title="Keep"><span class="tag-dot"></span>Keep</span></td></tr><tr data-safety="keep" data-size="12884901888">
+          <td><b>.psd</b><div class="detail">61 file(s) of this type.</div></td>
+          <td class="size"><span class="n">12.9 GB</span><div class="bar"><div class="bar-fill" style="width:26.1%;background:#8a8375"></div></div></td>
+          <td><span class="tag tag-keep" title="Keep"><span class="tag-dot"></span>Keep</span></td></tr></tbody></table></details>
 <details class="agent" open>
       <summary>
-        <span class="ic">🧬</span>
+        <span class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
         <span class="t">Duplicate Files</span>
-        <span class="status ok">ok</span>
-        <span class="s">14 dup sets, ~5.9 GB</span>
-        <span class="chev">▸</span>
+        <span class="status ok">done</span>
+        <span class="s"><b>3.6 GB</b> · 14 dup sets, ~5.9 GB</span>
+        <span class="chev"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       </summary><div class="notes">14 duplicate set(s); ~5.9 GB reclaimable.</div><table>
           <thead><tr>
-            <th onclick="srt(this,0,'s')">Item</th>
-            <th onclick="srt(this,1,'n')">Size</th>
-            <th onclick="srt(this,2,'s')">Safety</th>
+            <th data-sort onclick="srt(this,0,'s')">Item</th>
+            <th data-sort onclick="srt(this,1,'n')">Size</th>
+            <th data-sort onclick="srt(this,2,'s')">Safety</th>
           </tr></thead><tbody><tr data-safety="review" data-size="2147483648">
-          <td><b>export-final.mp4 ×3</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">3 identical copies of 1 GB each. Keep one, remove the rest.</div></td>
-          <td class="size"><span class="n">2.1 GB</span><div class="bar"><div class="bar-fill" style="width:100.0%;background:#d29922"></div></div></td>
-          <td><span class="tag tag-review" title="Review first">Review first</span></td></tr><tr data-safety="review" data-size="1468006400">
-          <td><b>dataset.zip ×2</b>
-            <div style="color:var(--muted);font-size:12px;margin-top:3px">2 identical copies of 1.4 GB each.</div></td>
-          <td class="size"><span class="n">1.5 GB</span><div class="bar"><div class="bar-fill" style="width:68.4%;background:#d29922"></div></div></td>
-          <td><span class="tag tag-review" title="Review first">Review first</span></td></tr></tbody></table></details>
-<div class="disclaimer">
-      <b>Read-only report.</b> Diskovery never deletes or modifies anything.
-      Every command shown is a suggestion for <i>you</i> to run after reviewing.
-      Sizes are on-disk estimates and totals may include some overlap between
-      categories — treat them as guidance, not exact figures.
+          <td><b>export-final.mp4 ×3</b><div class="detail">3 identical copies of 1 GB each. Keep one, remove the rest.</div></td>
+          <td class="size"><span class="n">2.1 GB</span><div class="bar"><div class="bar-fill" style="width:100.0%;background:#a3610c"></div></div></td>
+          <td><span class="tag tag-review" title="Review first"><span class="tag-dot"></span>Review first</span></td></tr><tr data-safety="review" data-size="1468006400">
+          <td><b>dataset.zip ×2</b><div class="detail">2 identical copies of 1.4 GB each.</div></td>
+          <td class="size"><span class="n">1.5 GB</span><div class="bar"><div class="bar-fill" style="width:68.4%;background:#a3610c"></div></div></td>
+          <td><span class="tag tag-review" title="Review first"><span class="tag-dot"></span>Review first</span></td></tr></tbody></table></details>
+</section>
+<div class="disclaimer"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+      <div><b>Diskovery never deletes anything.</b> This report is read-only —
+      every command above is a suggestion for <i>you</i> to review and run.
+      Sizes are on-disk estimates and categories can overlap slightly, so treat
+      totals as a well-informed guide rather than an exact figure.</div>
     </div>
     <div class="foot">
-      Generated by Diskovery v0.1.0 ·
+      Diskovery v0.1.0 ·
       2026-07-01 02:30 ·
-      thorough scan in 47.3s.
-      Re-run any time with <code class="sg">python3 -m diskovery</code>.
+      thorough scan in 47.3s ·
+      re-run with <code class="sg">python3 -m diskovery</code>
     </div>
 <script>
 function cp(btn){
-  var code = btn.previousElementSibling.innerText;
+  var code = btn.parentElement.querySelector('code').innerText;
   navigator.clipboard.writeText(code).then(function(){
-    var o=btn.innerText; btn.innerText='copied'; setTimeout(function(){btn.innerText=o;},1200);
+    btn.classList.add('done');
+    var svg = btn.querySelector('svg').outerHTML;
+    btn.innerHTML = svg + 'Copied';
+    setTimeout(function(){ btn.classList.remove('done');
+      btn.innerHTML = svg + 'Copy'; }, 1400);
   });
 }
 function srt(th,col,type){
@@ -478,6 +717,14 @@ function srt(th,col,type){
   rows.forEach(function(r){tb.appendChild(r);});
 }
 var active={all:true,safe:true,review:true,keep:true};
+var query='';
+function apply(){
+  document.querySelectorAll('tr[data-safety]').forEach(function(r){
+    var okSafety = active[r.getAttribute('data-safety')];
+    var okQuery = !query || r.innerText.toLowerCase().indexOf(query) !== -1;
+    r.style.display = (okSafety && okQuery) ? '' : 'none';
+  });
+}
 function flt(chip){
   var f=chip.getAttribute('data-f');
   if(f==='all'){
@@ -485,13 +732,17 @@ function flt(chip){
     ['all','safe','review','keep'].forEach(function(k){active[k]=on;});
   } else {
     active[f]=!active[f];
+    active.all=active.safe&&active.review&&active.keep;
   }
   document.querySelectorAll('.chip').forEach(function(c){
     var cf=c.getAttribute('data-f'); c.classList.toggle('active',active[cf]);
   });
-  document.querySelectorAll('tr[data-safety]').forEach(function(r){
-    r.style.display=active[r.getAttribute('data-safety')]?'':'none';
-  });
+  apply();
+}
+function src(v){ query=v.trim().toLowerCase(); apply();
+  if(query) tgl(true); }
+function tgl(open){
+  document.querySelectorAll('details.agent').forEach(function(d){ d.open=open; });
 }
 </script>
-</body></html>
+</div></body></html>
