@@ -21,16 +21,14 @@ An **orchestrator** runs a fleet of specialized **agents** concurrently. Each
 agent owns one domain, does a read-only sweep, and returns normalized findings.
 One agent hanging or crashing can never sink the report — each runs isolated
 with an overall time budget. Results are aggregated into `report.html` (with a
-machine-readable `report.json` alongside).
+machine-readable `report.json` alongside). Every path is owned by exactly one
+agent, so no byte is ever counted twice in the totals.
 
 ## The report
 
 A single HTML file with zero external assets — it opens offline, prints
 cleanly, and works without JavaScript (JS just adds sorting, filtering and
-copy buttons). It's styled like a printed technical audit: warm paper
-background, ledger rules, serif display type and monospaced figures, with
-exactly two data colors — green for *safe*, amber for *review*. It gives you,
-top to bottom:
+copy buttons). It gives you, top to bottom:
 
 - **Headline** — how much you can free right now, and how much more after review
 - **Your disk at a glance** — one bar mapping the whole disk: in use / safe to
