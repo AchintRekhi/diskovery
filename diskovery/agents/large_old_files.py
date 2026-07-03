@@ -38,9 +38,12 @@ class LargeOldFilesAgent(Agent):
 
         home = ctx.home
         base_depth = home.rstrip(os.sep).count(os.sep)
-        for cur, dirs, _files in os.walk(home, onerror=lambda e: None):
+        for cur, dirs, files in os.walk(home, onerror=lambda e: None):
             if cur.count(os.sep) - base_depth > max_depth:
                 dirs[:] = []
+                continue
+            if "pyvenv.cfg" in files:
+                dirs[:] = []      # virtualenv — owned by PythonAgent
                 continue
             dirs[:] = [
                 d for d in dirs
@@ -138,20 +141,12 @@ class LargeOldFilesAgent(Agent):
                 items.append((st.st_size, full, ctx.now - st.st_mtime, is_inst))
         except OSError:
             pass
-        if installer_count:
-            out.append(Finding(
-                category="Downloads",
-                label=f"Installers in Downloads ({installer_count})",
-                size_bytes=installer_bytes,
-                path=dl,
-                safety=Safety.SAFE,
-                detail="Disk images/archives/installers — usually safe to delete after install.",
-                suggestion="# review then remove old installers from ~/Downloads",
-            ))
+        # List the biggest items individually, then roll the *remaining*
+        # installers into one aggregate row — never both, so no byte in
+        # Downloads is counted twice.
         items.sort(reverse=True)
-        for sz, full, age, is_inst in items[:10]:
-            if sz < 20 * 1024 * 1024:
-                break
+        shown = [it for it in items[:10] if it[0] >= 20 * 1024 * 1024]
+        for sz, full, age, is_inst in shown:
             out.append(Finding(
                 category="Downloads",
                 label=os.path.basename(full),
@@ -159,6 +154,18 @@ class LargeOldFilesAgent(Agent):
                 path=full,
                 safety=Safety.SAFE if is_inst else Safety.REVIEW,
                 detail=f"In Downloads, {human_age(age)} old.",
+            ))
+        shown_inst = [it for it in shown if it[3]]
+        rest_bytes = installer_bytes - sum(sz for sz, _, _, _ in shown_inst)
+        rest_count = installer_count - len(shown_inst)
+        if rest_count > 0 and rest_bytes > 0:
+            out.append(Finding(
+                category="Downloads",
+                label=f"… {rest_count} more installer(s) in Downloads",
+                size_bytes=rest_bytes,
+                safety=Safety.SAFE,
+                detail="Disk images/archives/installers — usually safe to delete after install.",
+                suggestion="# review then remove old installers from ~/Downloads",
             ))
         if installer_count:
             notes.append(f"{installer_count} installer(s) in Downloads "

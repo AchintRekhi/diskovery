@@ -93,14 +93,22 @@ class DuplicateFilesAgent(Agent):
         groups: Dict[int, List[str]] = defaultdict(list)
         home = ctx.home
         base_depth = home.rstrip(os.sep).count(os.sep)
-        for cur, dirs, _files in os.walk(home, onerror=lambda e: None):
+        for cur, dirs, files in os.walk(home, onerror=lambda e: None):
             if cur.count(os.sep) - base_depth > 14:
                 dirs[:] = []
                 continue
+            if "pyvenv.cfg" in files:
+                dirs[:] = []      # virtualenv — owned by PythonAgent
+                continue
+            # .fcpbundle and DaVinci cache dirs are owned by CreativeCacheAgent
+            # (render files are full of legitimate identical frames anyway).
             dirs[:] = [
                 d for d in dirs
                 if d not in _SKIP and not d.endswith(".app")
                 and not d.endswith(".photoslibrary")
+                and not d.endswith(".fcpbundle")
+                and not (os.path.basename(cur) == "DaVinci Resolve" and d in
+                         {"CacheClip", "ProxyMedia", "Optimized Media"})
             ]
             try:
                 with os.scandir(cur) as it:

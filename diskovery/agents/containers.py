@@ -115,15 +115,20 @@ class ContainerAgent(Agent):
         raw = next((p for p in raw_candidates if os.path.exists(p)), None)
         if raw:
             on_disk = ctx.du_bytes(raw, timeout=30)  # du is sparse-aware
+            # When the daemon is up the live breakdown above already counts the
+            # reclaimable space *inside* this file — report it as informational
+            # then, so the same bytes aren't counted twice.
             out.append(Finding(
                 category="VM disk",
                 label="Docker.raw (VM disk image)",
                 size_bytes=on_disk,
                 path=raw,
-                safety=Safety.REVIEW,
+                safety=Safety.KEEP if daemon_up else Safety.REVIEW,
                 detail="Docker Desktop's virtual disk. It does NOT auto-shrink "
                        "after prune; reclaim via Docker Desktop → Troubleshoot → "
-                       "'Clean / Purge data', or delete if you no longer use Docker.",
+                       "'Clean / Purge data', or delete if you no longer use Docker."
+                       + (" Reclaimable space inside it is itemized above."
+                          if daemon_up else ""),
                 suggestion="# Docker Desktop → Settings → Troubleshoot → Clean / Purge data",
             ))
         else:
