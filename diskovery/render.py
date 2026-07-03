@@ -573,11 +573,15 @@ def _donut(safe: int, review: int) -> str:
             f'stroke="var(--safe)" stroke-width="18" '
             f'stroke-dasharray="{safe_len:.1f} {circ:.1f}" '
             f'transform="rotate(-90 55 55)"/>')
+    # Fit the label to the 60-unit hole: bold mono glyphs run ~0.62em wide,
+    # so long labels like "100.2 GB" must drop below the 15px default.
+    label = human_size(total)
+    fs = min(15.0, 88.0 / max(1, len(label)))
     return f"""<svg width="124" height="124" viewBox="0 0 110 110" role="img"
       aria-label="Reclaimable space: safe versus needs review">{arcs}
       <circle cx="55" cy="55" r="30" fill="var(--paper)"/>
-      <text x="55" y="53" text-anchor="middle" fill="#211d15" font-size="15"
-        font-weight="700" font-family="ui-monospace,Menlo,monospace">{human_size(total)}</text>
+      <text x="55" y="53" text-anchor="middle" fill="#211d15" font-size="{fs:.1f}"
+        font-weight="700" font-family="ui-monospace,Menlo,monospace">{_e(label)}</text>
       <text x="55" y="69" text-anchor="middle" fill="#98917f" font-size="8"
         letter-spacing="1.5" font-family="ui-monospace,Menlo,monospace">FOUND</text></svg>"""
 
